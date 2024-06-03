@@ -1,0 +1,17 @@
+{
+  "name": "dhextra",
+  "version": "1.0.0",
+  "description": "test auto enable disable on last preset of race",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eversocket": "0.0.4",
+    "net": "^1.0.2",
+    "reconnecting-websocket": "^4.4.0",
+    "ws": "^8.6.0"
+  }
+}
