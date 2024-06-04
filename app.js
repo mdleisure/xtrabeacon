@@ -4,11 +4,6 @@ const WebSocket = require('ws')
 const ReconnectingWebSocket = require('reconnecting-websocket');
 const url = 'ws://192.168.0.40:8000/ws'
 
-// contruct holder for mod time state
-const active = {
-	mod: 0,
-}
-
 // contruct connection options for xtra beacon
 const options = {
 	moxaIpAddress: '192.168.0.180',
@@ -23,27 +18,6 @@ const suboptions = {
   "data": ['run.timer']
 }
 
-// proxy to monitor the time state and send once on state change to enable disable the beacon
-const modProxy = new Proxy(active, {
-  set: function (target, key, value){
-    
-       console.log(`${key} set from ${active.mod} to ${value}`);
-       if ((active.mod==0) && (value==1)){
-        console.log('turning on')
-        sendnewData('#0:2\\MOD1')
-       }
-
-       if ((active.mod==1) && (value==0)){
-        console.log('turning off')
-        sendnewData('#0:2\\MOD0')
-       }
-       
-target[key] = value;
-return true; 
-},
-});
-
-
 // reconnecting websocket 
 
 //rws = new ReconnectingWebSocket(`ws://192.168.0.40:8000/ws`);
@@ -55,10 +29,8 @@ rws = new ReconnectingWebSocket(url, undefined, {
 rws.addEventListener('open', () => {
   console.log('Connected')
   this.isConnected = true
-  //this.subscribe()
   rws.send(JSON.stringify(suboptions))
-  //rws.send(JSON.stringify({ topic: 'run', data: {test: 'here'}}));
-})
+  })
 rws.addEventListener('close', () => {
   console.log('Close')
   this.isConnected = false
@@ -66,24 +38,7 @@ rws.addEventListener('close', () => {
 rws.addEventListener('error', (err) => {
   console.log('Error', err)
 })
-// rws.addEventListener('message', (message) => {
-//   console.log("incoming");
-//   const { topic, data } = JSON.parse(message.data)
-//   console.log(data.payload.elapsed_under_racing.remaining)
-//   const currentTime = (data.payload.elapsed_under_racing.remaining)
- 
-
-//   if (currentTime >= "60000" ){
-//    modProxy.mod=0;
-//     // sendnewData('#0:2\\MOD0')
-    
-//   }
-//   if (currentTime <= "59999" ){
-//     modProxy.mod=1;
-//     // sendnewData('#0:2\\MOD1')
-//       }
-// })
-  rws.addEventListener('message', onVolareMsg) // Links to function below
+rws.addEventListener('message', onVolareMsg) // Links to function below
 
 const ABOVE_1MIN_REMAIN = '#0:2\\MOD0'
 const BELOW_1MIN_REMIAN = '#0:2\\MOD1'
