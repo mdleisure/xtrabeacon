@@ -66,46 +66,24 @@ rws.addEventListener('close', () => {
 rws.addEventListener('error', (err) => {
   console.log('Error', err)
 })
-// rws.addEventListener('message', (message) => {
-//   console.log("incoming");
-//   const { topic, data } = JSON.parse(message.data)
-//   console.log(data.payload.elapsed_under_racing.remaining)
-//   const currentTime = (data.payload.elapsed_under_racing.remaining)
+rws.addEventListener('message', (message) => {
+  console.log("incoming");
+  const { topic, data } = JSON.parse(message.data)
+  console.log(data.payload.elapsed_under_racing.remaining)
+  const currentTime = (data.payload.elapsed_under_racing.remaining)
  
 
-//   if (currentTime >= "60000" ){
-//    modProxy.mod=0;
-//     // sendnewData('#0:2\\MOD0')
+  if (currentTime >= "60000" ){
+   modProxy.mod=0;
+    // sendnewData('#0:2\\MOD0')
     
-//   }
-//   if (currentTime <= "59999" ){
-//     modProxy.mod=1;
-//     // sendnewData('#0:2\\MOD1')
-//       }
-// })
-  rws.addEventListener('message', onVolareMsg) // Links to function below
-
-const ABOVE_1MIN_REMAIN = '#0:2\\MOD0'
-const BELOW_1MIN_REMIAN = '#0:2\\MOD1'
-let lastCommandSent = null // Tracks the last command sent so that we do not resend
-
-function onVolareMsg(message) {
-  try {
-    const { data } = JSON.parse(message.data)
-    const timeRemaining = data.payload.elapsed_under_racing.remaining
-  
-    if (timeRemaining >= 60_000 && lastCommandSent !== ABOVE_1MIN_REMAIN) {
-      sendnewData(ABOVE_1MIN_REMAIN)
-      lastCommandSent = ABOVE_1MIN_REMAIN
-    }
-    if (timeRemaining < 60_000 && lastCommandSent !== BELOW_1MIN_REMIAN) {
-      sendnewData(BELOW_1MIN_REMIAN)
-      lastCommandSent = BELOW_1MIN_REMIAN
-    }
-  } catch (e) {
-    console.error(`Error processing Volare message: ${e}`, e)
   }
-}
+  if (currentTime <= "59999" ){
+    modProxy.mod=1;
+    // sendnewData('#0:2\\MOD1')
+      }
+})
+
 
 // send the command through to xtra beacon with params
 function sendnewData(cmd){
@@ -158,3 +136,4 @@ const dhSocket = new EverSocket({
   dhSocket.connect(options.moxaPort, options.moxaIpAddress);
   
 
+  
