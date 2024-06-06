@@ -2,13 +2,20 @@ const net = require('net');
 const EverSocket = require('eversocket').EverSocket;
 const WebSocket = require('ws')
 const ReconnectingWebSocket = require('reconnecting-websocket');
-const url = 'ws://192.168.0.40:8000/ws'
+const jsonfile = require('jsonfile');
+const path = 'settings.json';
+//const url = 'ws://192.168.0.40:8000/ws'
 
-// contruct connection options for xtra beacon
-const options = {
-	moxaIpAddress: '192.168.0.180',
-	moxaPort: 23,
-}
+//contruct connection options for xtra beacon
+// const options = {
+//  moxaIpAddress: '192.168.0.1',
+// 	moxaPort: 23,
+//}
+
+//read the settings file and store variable settings
+const settings=jsonfile.readFileSync(path)
+console.log("Current Settings","beacon",settings.beaconIp,"url",settings.url)
+
 
 // construct websocket stream options
 const suboptions = {
@@ -21,7 +28,7 @@ const suboptions = {
 // reconnecting websocket 
 
 //rws = new ReconnectingWebSocket(`ws://192.168.0.40:8000/ws`);
-rws = new ReconnectingWebSocket(url, undefined, {
+rws = new ReconnectingWebSocket(settings.url, undefined, {
   WebSocket,
   maxRetries: 0,
 })
@@ -110,6 +117,9 @@ const dhSocket = new EverSocket({
       console.log('reply: ', data)
   
   })
-  dhSocket.connect(options.moxaPort, options.moxaIpAddress);
+
+    // dhSocket.connect(options.moxaPort, options.moxaIpAddress);
+  dhSocket.connect(settings.beaconPort, settings.beaconIp);
+  
   
 
